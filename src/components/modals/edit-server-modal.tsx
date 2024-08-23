@@ -28,6 +28,7 @@ import { Button } from "@/components/ui/button";
 import {FileUpload} from "@/components/file-upload";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 
 const formSchema = z.object({
@@ -39,11 +40,14 @@ const formSchema = z.object({
     })
 });
 
-export const CreateServerModal = () => {
-    const router = useRouter();
+export const EditServerModal = () => {
 
-    const { isOpen, onClose, type } = useModal();
-    const isModalOpen = isOpen && type === "createServer";
+    const { isOpen, onClose, type, data } = useModal();
+    const router = useRouter();
+    const isModalOpen = isOpen && type === "editServer";
+    const { server } = data;
+
+
     const form = useForm({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -52,14 +56,22 @@ export const CreateServerModal = () => {
         }
     })
 
+    useEffect(() => {
+        if (server) {
+            form.setValue("name", server.name);
+            form.setValue("imageUrl", server.imageUrl);
+        }
+    }, [server, form])
+
     const isLoading = form.formState.isSubmitting;
 
     const onSubmit = async (values: z.infer<typeof formSchema>) => {
         try {
-            await axios.post("/api/servers", values);
+            await axios.patch(`/api/servers/${server?.id}`, values);
             form.reset();
-            router.refresh();
             onClose();
+            router.refresh();
+
         } catch (error) {
             console.log(error);
 
@@ -76,11 +88,10 @@ export const CreateServerModal = () => {
             <DialogContent className="bg-white text-black p-0 overflow-hidden">
                 <DialogHeader className="pt-8 px-6">
                     <DialogTitle className="text-2xl text-center font-bold">
-                        Welcome to Discord, customize ur server now!
+                        Customize ur server
                     </DialogTitle>
                     <DialogDescription className="text-center text-sm mt-2">
-                        Give ur server a personality with a name and an image.
-                        You can change it later
+                        Just remove old image, upload a new one and give it a new name (if need). So easy, hehe
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form} >
@@ -111,7 +122,7 @@ export const CreateServerModal = () => {
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel className="uppercase text-xs font-bold 
-                                                            text-zinc-500 dark:text-secondary/70">
+                                                        text-zinc-500 dark:text-secondary/70">
                                             Server Name
                                         </FormLabel>
                                         <FormControl>
@@ -129,7 +140,7 @@ export const CreateServerModal = () => {
                             />
                         </div>
                         <DialogFooter className="bg-gray-100 px-6 py-4">
-                            <Button variant="primary" disabled={isLoading}>Create</Button>
+                            <Button variant="primary" disabled={isLoading}>Save</Button>
                         </DialogFooter>
                     </form>
                 </Form>
