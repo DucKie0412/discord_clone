@@ -1,6 +1,5 @@
 import { currentProfile } from "@/lib/current-profile";
 import { redirect } from "next/navigation";
-import { RedirectToSignIn } from "@clerk/nextjs";
 import { db } from "@/lib/db";
 import { ServerSidebar } from "@/components/server/server-sidebar";
 
