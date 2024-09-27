@@ -12,7 +12,7 @@ export const SocketIndicator = () => {
                 variant={"outline"}
                 className="bg-yellow-600 tex-white border-none"
             >
-                Fallback: Polling every 1s
+                Bad connection to server
             </Badge>
         )
     }
@@ -22,7 +22,7 @@ export const SocketIndicator = () => {
             variant={"outline"}
             className="bg-emerald-600 text-white border-none"
         >
-            Live: Reatime-update
+            Good
         </Badge>
     )
 }
